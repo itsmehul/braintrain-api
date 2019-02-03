@@ -1,0 +1,26 @@
+
+type Link {
+  id: ID! @unique
+  description: String!
+  url: String!
+  postedBy: User
+}
+
+type User {
+  id: ID! @unique
+  name: String!
+  email: String! @unique
+  fid: String!
+  links: [Link!]!
+  teacherIn: [Classroom!] @relation(name:"TeacherInClassroom")
+  studentIn: [Classroom!] @relation(name:"StudentInClassroom")
+
+}
+
+type Classroom {
+  id: ID! @unique
+  name: String!
+  students: [User!] @relation(name:"StudentInClassroom")
+  teacher: User! @relation(name:"TeacherInClassroom")
+
+}

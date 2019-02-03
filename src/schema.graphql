@@ -1,0 +1,30 @@
+type Query {
+  classrooms: [Classroom!]
+  users: [User!]
+}
+type Mutation {
+  signup(email: String!, fid: String!, name: String!): AuthPayload
+  login(email: String!, fid: String!): AuthPayload
+  createClassroom(name:String!):Classroom
+  joinClassroom(id:ID!):Classroom
+}
+
+type Classroom{
+  id: ID!
+  name: String!
+  students: [User!]
+  teacher: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  teacherIn: [Classroom!] 
+  studentIn: [Classroom!]
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
