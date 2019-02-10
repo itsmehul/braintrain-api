@@ -22,5 +22,25 @@ type Classroom {
   name: String!
   students: [User!] @relation(name:"StudentInClassroom")
   teacher: User! @relation(name:"TeacherInClassroom")
+  description: String
+  rating: Int
+  startsFrom: DateTime
+  learning: String
+  language: String
+  requirments: String
+  objectives: String
+  lectures: [Lecture!]
+  fee: Float
+}
 
+type Lecture {
+  id: ID! @unique
+  name: String!
+  description: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  liveAt: DateTime
+  students:[User!] @relation(name:"StudentInLecture")
+  teacher:User @relation(name:"TeacherInLecture")
+  classroom:Classroom
 }

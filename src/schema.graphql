@@ -1,11 +1,16 @@
 type Query {
   classrooms: [Classroom!]
   users: [User!]
+  user(id:ID!): User
+  classroom(id:ID!):Classroom
+  lectures:[Lecture!]
+  lecture(id:ID!):Lecture
 }
 type Mutation {
   signup(email: String!, fid: String!, name: String!): AuthPayload
   login(email: String!, fid: String!): AuthPayload
-  createClassroom(name:String!):Classroom
+  createClassroom( name: String, description: String, startsFrom: String, learning: String, language: String, requirments: String, objectives: String, fee: Float):Classroom
+  createLecture(   name: String, description: String, liveAt: String, classroomId:ID):Lecture
   joinClassroom(id:ID!):Classroom
 }
 
@@ -14,6 +19,27 @@ type Classroom{
   name: String!
   students: [User!]
   teacher: User!
+  description: String
+  rating: Int
+  startsFrom: String
+  learning: String
+  language: String
+  requirments: String
+  objectives: String
+  lectures: [Lecture!]
+  fee: Float
+}
+
+type Lecture{
+  id: ID! 
+  name: String!
+  description: String!
+  createdAt: String
+  updatedAt: String
+  liveAt: String
+  students:[User!] 
+  teacher:User 
+  classroom:Classroom
 }
 
 type User {

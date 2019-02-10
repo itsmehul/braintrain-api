@@ -39,7 +39,43 @@ async function login(parent, args, context, info) {
   }
 }
 
+async function createClassroom(parent, args, context) {
+  const userId = getUserId(context)
+  return context.prisma.createClassroom({
+    teacher: { connect: { id: userId } },
+    name: args.name,
+    description: args.description,
+    rating: 0,
+    startsFrom:args.startsFrom,
+    learning:args.learning,
+    language: args.language,
+    requirments:args.requirments,
+    objectives:args.objectives,
+    fee: args.fee
+  })
+}
+
+async function createLecture(parent, args, context) {
+  const userId = getUserId(context)
+  const classroomExists = await context.prisma.$exists.classroom({
+    teacher: { id: userId },
+    id: args.classroomId 
+  })
+  if (!classroomExists) {
+    throw new Error(`This is not your classroom`)
+  }
+  return context.prisma.createLecture({
+    teacher: { connect: { id: userId } },
+    name: args.name, 
+    description: args.description, 
+    liveAt: args.liveAt, 
+    classroom:{ connect: { id: args.classroomId } }
+  })
+}
+
 module.exports = {
   signup,
   login,
+  createClassroom,
+  createLecture
 }
