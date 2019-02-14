@@ -1,35 +1,49 @@
-
-type Link {
-  id: ID! @unique
-  description: String!
-  url: String!
-  postedBy: User
-}
-
 type User {
   id: ID! @unique
+    createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
   email: String! @unique
   fid: String!
-  links: [Link!]!
+  role: UserRole
+  description: String
+  profession: String  
   teacherIn: [Classroom!] @relation(name:"TeacherInClassroom")
   studentIn: [Classroom!] @relation(name:"StudentInClassroom")
+}
 
+enum UserRole {
+  TEACHER,
+  STUDENT,
+  ADMIN
 }
 
 type Classroom {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String!
-  students: [User!] @relation(name:"StudentInClassroom")
   teacher: User! @relation(name:"TeacherInClassroom")
   description: String
   rating: Int
-  startsFrom: DateTime
   learning: String
   language: String
   requirments: String
   objectives: String
-  lectures: [Lecture!]
+  batches: [Batch!]
+}
+
+type Batch{
+  id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+    lectures: [Lecture!]
+  teacher: User! @relation(name:"TeacherInBatch")
+  students: [User!] @relation(name:"StudentInBatch")
+  classroom:Classroom
+  name: String!
+  description: String!
+  startsFrom: DateTime
   fee: Float
 }
 
@@ -39,8 +53,10 @@ type Lecture {
   description: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  liveAt: DateTime
-  students:[User!] @relation(name:"StudentInLecture")
+  liveAt: DateTime!
+  endAt: DateTime!
   teacher:User @relation(name:"TeacherInLecture")
+  students: [User!] @relation(name:"StudentInLecture")
+  batch: Batch
   classroom:Classroom
 }

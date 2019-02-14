@@ -1,17 +1,13 @@
-function students(parent, args, context) {
-    return context.prisma.classroom({ id: parent.id }).students()
-  }
-  
+
   function teacher(parent, args, context) {
     return context.prisma.classroom({ id: parent.id }).teacher()
   }
   
-  function lectures(parent, args, context) {
-    return context.prisma.classroom({ id: parent.id }).lectures()
+  function batches(parent, args, context) {
+    return context.prisma.classroom({ id: parent.id }).batches()
   }
 
   module.exports = {
     teacher,
-    students,
-    lectures
+    batches
   }

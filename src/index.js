@@ -4,12 +4,14 @@ const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 const Classroom = require('./resolvers/Classroom')
 const User = require('./resolvers/User')
+const Batch = require('./resolvers/Batch')
 
 const resolvers = {
     Query,
     Mutation,
     Classroom,
-    User
+    User,
+    Batch
   }
 
 

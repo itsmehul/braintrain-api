@@ -1,56 +1,87 @@
 type Query {
-  classrooms: [Classroom!]
-  users: [User!]
-  user(id:ID!): User
-  classroom(id:ID!):Classroom
-  lectures:[Lecture!]
-  lecture(id:ID!):Lecture
+	classrooms: [Classroom!]
+	users: [User!]
+	user(id: ID!): User
+	classroom(id: ID!): Classroom
+	lectures: [Lecture!]
+	lecture(id: ID!): Lecture
 }
 type Mutation {
-  signup(email: String!, fid: String!, name: String!): AuthPayload
-  login(email: String!, fid: String!): AuthPayload
-  createClassroom( name: String, description: String, startsFrom: String, learning: String, language: String, requirments: String, objectives: String, fee: Float):Classroom
-  createLecture(   name: String, description: String, liveAt: String, classroomId:ID):Lecture
-  joinClassroom(id:ID!):Classroom
+	signup(email: String!, fid: String!, name: String!): AuthPayload
+	login(email: String!, fid: String!): AuthPayload
+  #STUDENT mutations
+	joinBatch(batchId: ID!): Batch
+  joinLiveLecture(lectureId: ID!, batchId: ID!): Lecture
+
+  # TEACHER mutations
+	createClassroom( name: String!, description: String, learning: String, language: String, requirments: String, objectives: String ): Classroom
+	createBatch( name: String! description: String! startsFrom: String fee: Float, classroomId: ID ): Batch
+	createLecture( name: String! description: String, liveAt: String, endAt: String, classroomId:ID!, batchId: ID!):Lecture
+	updateUser(name: String, description: String, profession: String): User
+	updateClassroom( name: String!, description: String, learning: String, language: String, requirments: String, objectives: String, classroomId: ID! ): Classroom
+	updateBatch( name: String! description: String! startsFrom: String fee: Float, batchId: ID! ): Batch
+  updateLecture(name: String description: String, liveAt: String, endAt: String, lectureId: ID!):Lecture
+	# ADMIN mutations
+	promoteUser(email: String): User
 }
 
-type Classroom{
-  id: ID!
-  name: String!
-  students: [User!]
-  teacher: User!
-  description: String
-  rating: Int
-  startsFrom: String
-  learning: String
-  language: String
-  requirments: String
-  objectives: String
-  lectures: [Lecture!]
-  fee: Float
+type Classroom {
+	id: ID!
+	createdAt: String!
+	updatedAt: String!
+	name: String!
+	teacher: User!
+	description: String
+	rating: Int
+	learning: String
+	language: String
+	requirments: String
+	objectives: String
+	batches: [Batch!]
 }
 
-type Lecture{
-  id: ID! 
-  name: String!
-  description: String!
-  createdAt: String
-  updatedAt: String
-  liveAt: String
-  students:[User!] 
-  teacher:User 
-  classroom:Classroom
+type Batch {
+	id: ID!
+	createdAt: String!
+	updatedAt: String!
+	lectures: [Lecture!]
+	teacher: User!
+	students: [User!]
+  classroom: Classroom
+  	name: String!
+	description: String!
+	startsFrom: String
+	fee: Float
+
+}
+
+type Lecture {
+	id: ID!
+	createdAt: String!
+	updatedAt: String!
+	classroom: Classroom
+	name: String!
+	description: String!
+	liveAt: String!
+	endAt: String!
+	teacher: User
+  students: [User]
 }
 
 type User {
-  id: ID!
-  name: String!
-  email: String!
-  teacherIn: [Classroom!] 
-  studentIn: [Classroom!]
+	id: ID!
+	createdAt: String!
+	updatedAt: String!
+	name: String!
+	email: String!
+	description: String
+	profession: String
+	role: String
+	teacherIn: [Classroom!]
+	studentIn: [Classroom!]
 }
 
 type AuthPayload {
-  token: String
-  user: User
+	token: String
+	user: User
 }
