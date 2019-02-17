@@ -77,10 +77,32 @@ async function isStudent(context, userId, batchId) {
 	}
 	return
 }
+
+async function isAvailable(context, userId, liveAt, endAt) {
+  if(new Date(liveAt)>new Date(endAt)) throw new Error(`Lecture cannot end before it starts!!`)
+
+	// if (false) {
+		const isNotAvailable = await context.prisma.$exists.lecture(
+			{
+			OR:[
+				//if true means unavailable
+			  {AND:[{  liveAt_lt:endAt},{endAt_gt:liveAt},{teacher:{id:userId}}]},
+			  {AND:[{  endAt_gt:liveAt},{liveAt_lt:endAt},{teacher:{id:userId}}]}
+			]
+		  }
+		  )
+		if (isNotAvailable) {
+			throw new Error(`These dates are unavailable`)
+		}
+	
+	return
+}
+
 module.exports = {
 	APP_SECRET,
 	getUserId,
 	isAdmin,
 	isTeacher,
-	isStudent
+  isStudent,
+  isAvailable
 }

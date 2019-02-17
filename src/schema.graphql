@@ -10,15 +10,15 @@ type Mutation {
 	signup(email: String!, fid: String!, name: String!): AuthPayload
 	login(email: String!, fid: String!): AuthPayload
   #STUDENT mutations
-	joinBatch(batchId: ID!): Batch
+	joinBatch(batchId: ID!, classroomId: ID!): Batch
   joinLiveLecture(lectureId: ID!, batchId: ID!): Lecture
 
   # TEACHER mutations
-	createClassroom( name: String!, description: String, learning: String, language: String, requirments: String, objectives: String ): Classroom
+	createClassroom( name: String!, description: String, learning: String, language: String, requirements: String, objectives: String ): Classroom
 	createBatch( name: String! description: String! startsFrom: String fee: Float, classroomId: ID ): Batch
 	createLecture( name: String! description: String, liveAt: String, endAt: String, classroomId:ID!, batchId: ID!):Lecture
 	updateUser(name: String, description: String, profession: String): User
-	updateClassroom( name: String!, description: String, learning: String, language: String, requirments: String, objectives: String, classroomId: ID! ): Classroom
+	updateClassroom( name: String!, description: String, learning: String, language: String, requirements: String, objectives: String, classroomId: ID! ): Classroom
 	updateBatch( name: String! description: String! startsFrom: String fee: Float, batchId: ID! ): Batch
   updateLecture(name: String description: String, liveAt: String, endAt: String, lectureId: ID!):Lecture
 	# ADMIN mutations
@@ -31,11 +31,12 @@ type Classroom {
 	updatedAt: String!
 	name: String!
 	teacher: User!
+  students: [User!]
 	description: String
 	rating: Int
 	learning: String
 	language: String
-	requirments: String
+	requirements: String
 	objectives: String
 	batches: [Batch!]
 }

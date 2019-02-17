@@ -1,6 +1,13 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId, isAdmin, isTeacher, isStudent } = require('../utils')
+const {
+	APP_SECRET,
+	getUserId,
+	isAdmin,
+	isTeacher,
+	isStudent,
+	isAvailable
+} = require('../utils')
 async function signup(parent, args, context, info) {
 	// 1
 	const fid = await bcrypt.hash(args.fid, 10)
@@ -29,10 +36,10 @@ async function login(parent, args, context, info) {
 	}
 
 	// 2
-	// const valid = await bcrypt.compare(args.fid, user.fid)
-	// if (!valid) {
-	// 	throw new Error('Invalid fid')
-	// }
+	const valid = await bcrypt.compare(args.fid, user.fid)
+	if (!valid) {
+		throw new Error('Invalid fid')
+	}
 
 	const token = jwt.sign({ userId: user.id }, APP_SECRET)
 
@@ -53,33 +60,27 @@ async function createClassroom(parent, args, context) {
 		description: args.description,
 		learning: args.learning,
 		language: args.language,
-		requirments: args.requirments,
+		requirements: args.requirements,
 		objectives: args.objectives
 	})
 }
 
 async function createBatch(parent, args, context) {
 	const userId = getUserId(context)
+	const {classroomId,...rest} = args
 
-	await isTeacher(context, userId, args.classroomId)
-
-	const userId = getUserId(context)
+	await isTeacher(context, userId, classroomId)
 	return context.prisma.createBatch({
 		teacher: { connect: { id: userId } },
-		classroom: { connect: { id: args.classroomId } },
-		name: args.name,
-		description: args.description,
-		learning: args.learning,
-		language: args.language,
-		requirments: args.requirments,
-		objectives: args.objectives
+		classroom: { connect: { id: classroomId } },
+		...rest
 	})
 }
 
 async function createLecture(parent, args, context) {
 	const userId = getUserId(context)
 	await isTeacher(context, userId, args.classroomId)
-
+	await isAvailable(context, userId, args.liveAt, args.endAt)
 	return context.prisma.createLecture({
 		teacher: { connect: { id: userId } },
 		name: args.name,
@@ -160,6 +161,17 @@ async function promoteUser(parent, args, context) {
 async function joinBatch(parent, args, context) {
 	const userId = getUserId(context)
 
+	const count = await context.prisma.batch({id:args.batchId}).$fragment( `{ students{name}  }` );
+	if(count.students.length>4) throw new Error('Batch is full')
+	await context.prisma.updateClassroom({
+		data: {
+			students: { connect: { id: userId } }
+		},
+		where: {
+			id: args.classroomId
+		}
+	})
+
 	return context.prisma.updateBatch({
 		data: {
 			students: { connect: { id: userId } }
@@ -172,7 +184,8 @@ async function joinBatch(parent, args, context) {
 
 async function joinLiveLecture(parent, args, context) {
 	const userId = getUserId(context)
-	await isStudent(context,userId,args.batchId)
+	await isStudent(context, userId, args.batchId)
+	
 	return context.prisma.updateLecture({
 		data: {
 			students: { connect: { id: userId } }

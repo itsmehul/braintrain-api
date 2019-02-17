@@ -24,11 +24,12 @@ type Classroom {
   updatedAt: DateTime!
   name: String!
   teacher: User! @relation(name:"TeacherInClassroom")
+  students: [User!] @relation(name:"StudentInClassroom")
   description: String
   rating: Int
   learning: String
   language: String
-  requirments: String
+  requirements: String
   objectives: String
   batches: [Batch!]
 }
