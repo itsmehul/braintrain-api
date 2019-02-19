@@ -35,7 +35,7 @@ async function login(parent, args, context, info) {
 		throw new Error('No such user found')
 	}
 
-	// 2
+	2
 	const valid = await bcrypt.compare(args.fid, user.fid)
 	if (!valid) {
 		throw new Error('Invalid fid')
@@ -67,7 +67,7 @@ async function createClassroom(parent, args, context) {
 
 async function createBatch(parent, args, context) {
 	const userId = getUserId(context)
-	const {classroomId,...rest} = args
+	const { classroomId, ...rest } = args
 
 	await isTeacher(context, userId, classroomId)
 	return context.prisma.createBatch({
@@ -106,6 +106,15 @@ async function updateLecture(parent, args, context) {
 	})
 }
 
+async function deleteLecture(parent, args, context) {
+	const userId = getUserId(context)
+	const { lectureId } = args
+	await isTeacher(context, userId, null, null, lectureId)
+	return context.prisma.deleteLecture({
+			id: lectureId
+	})
+}
+
 async function updateBatch(parent, args, context) {
 	const userId = getUserId(context)
 	const { batchId, ...rest } = { ...args }
@@ -120,17 +129,35 @@ async function updateBatch(parent, args, context) {
 	})
 }
 
+async function deleteBatch(parent, args, context) {
+	const userId = getUserId(context)
+	const { batchId } = { ...args }
+	await isTeacher(context, userId, null, batchId)
+	return context.prisma.deleteBatch({
+			id: batchId
+	})
+}
+
 async function updateClassroom(parent, args, context) {
 	const userId = getUserId(context)
 	const { classroomId, ...rest } = { ...args }
 	await isTeacher(context, userId, classroomId)
-	return context.prisma.updateLecture({
+	return context.prisma.updateClassroom({
 		data: {
 			...rest
 		},
 		where: {
 			id: classroomId
 		}
+	})
+}
+
+async function deleteClassroom(parent, args, context) {
+	const userId = getUserId(context)
+	const { classroomId } = { ...args }
+	await isTeacher(context, userId, classroomId)
+	return context.prisma.deleteClassroom({
+			id: classroomId
 	})
 }
 
@@ -142,6 +169,12 @@ async function updateUser(parent, args, context) {
 		where: {
 			id: getUserId(context)
 		}
+	})
+}
+
+async function deleteUser(parent, args, context) {
+	return context.prisma.deleteUser({
+			id: getUserId(context)
 	})
 }
 
@@ -161,8 +194,10 @@ async function promoteUser(parent, args, context) {
 async function joinBatch(parent, args, context) {
 	const userId = getUserId(context)
 
-	const count = await context.prisma.batch({id:args.batchId}).$fragment( `{ students{name}  }` );
-	if(count.students.length>4) throw new Error('Batch is full')
+	const count = await context.prisma
+		.batch({ id: args.batchId })
+		.$fragment(`{ students{name}  }`)
+	if (count.students.length > 4) throw new Error('Batch is full')
 	await context.prisma.updateClassroom({
 		data: {
 			students: { connect: { id: userId } }
@@ -185,7 +220,7 @@ async function joinBatch(parent, args, context) {
 async function joinLiveLecture(parent, args, context) {
 	const userId = getUserId(context)
 	await isStudent(context, userId, args.batchId)
-	
+
 	return context.prisma.updateLecture({
 		data: {
 			students: { connect: { id: userId } }
@@ -208,5 +243,9 @@ module.exports = {
 	updateClassroom,
 	updateLecture,
 	joinBatch,
-	joinLiveLecture
+	joinLiveLecture,
+	deleteBatch,
+	deleteLecture,
+	deleteClassroom,
+	deleteUser
 }

@@ -8,8 +8,8 @@ type User {
   role: UserRole
   description: String
   profession: String  
-  teacherIn: [Classroom!] @relation(name:"TeacherInClassroom")
-  studentIn: [Classroom!] @relation(name:"StudentInClassroom")
+  teacherIn: [Classroom!] @relation(name:"TeacherInClassroom", onDelete:CASCADE)
+  studentIn: [Classroom!] @relation(name:"StudentInClassroom", onDelete:CASCADE)
 }
 
 enum UserRole {
@@ -31,17 +31,17 @@ type Classroom {
   language: String
   requirements: String
   objectives: String
-  batches: [Batch!]
+  batches: [Batch!] @relation(name:"ClassroomOnBatch", onDelete:CASCADE)
 }
 
 type Batch{
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-    lectures: [Lecture!]
+    lectures: [Lecture!] @relation(name:"BatchOnLecture", onDelete:CASCADE)
   teacher: User! @relation(name:"TeacherInBatch")
   students: [User!] @relation(name:"StudentInBatch")
-  classroom:Classroom
+  classroom:Classroom @relation(name:"ClassroomOnBatch")
   name: String!
   description: String!
   startsFrom: DateTime
@@ -58,6 +58,6 @@ type Lecture {
   endAt: DateTime!
   teacher:User @relation(name:"TeacherInLecture")
   students: [User!] @relation(name:"StudentInLecture")
-  batch: Batch
+  batch: Batch @relation(name:"BatchOnLecture")
   classroom:Classroom
 }
