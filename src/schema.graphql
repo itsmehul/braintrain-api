@@ -15,14 +15,14 @@ type Mutation {
   joinLiveLecture(lectureId: ID!, batchId: ID!): Lecture
 
   # TEACHER mutations
-	createClassroom( name: String!, description: String!, learning: String!, language: String!, requirements: String!, objectives: String! ): Classroom
+	createClassroom( name: String!, classroomImage:String!, description: String!, learning: String!, language: String!, requirements: String!, objectives: String! ): Classroom
 	createBatch( name: String! description: String! startsFrom: String fee: Float, classroomId: ID ): Batch
 	createLecture( name: String! description: String, liveAt: String, endAt: String, classroomId:ID!, batchId: ID!):Lecture
-	updateUser(name: String, description: String, profession: String): User
+	updateUser(name: String, dpUrl: String, description: String, profession: String): User
 	deleteUser: User
-	updateClassroom( name: String!, description: String, learning: String, language: String, requirements: String, objectives: String, classroomId: ID! ): Classroom
+	updateClassroom( name: String, classroomImage:String, description: String, learning: String, language: String, requirements: String, objectives: String, classroomId: ID! ): Classroom
 	deleteClassroom( classroomId: ID! ): Classroom
-	updateBatch( name: String! description: String! startsFrom: String fee: Float, batchId: ID! ): Batch
+	updateBatch( name: String description: String startsFrom: String fee: Float, batchId: ID! ): Batch
 	deleteBatch( batchId: ID! ): Batch
   updateLecture(name: String description: String, liveAt: String, endAt: String, lectureId: ID!):Lecture
   deleteLecture(lectureId: ID!):Lecture
@@ -38,6 +38,7 @@ type Classroom {
 	teacher: User!
   students: [User!]
 	description: String
+	classroomImage: String
 	rating: Int
 	learning: String
 	language: String
@@ -85,6 +86,7 @@ type User {
 	description: String
 	profession: String
 	role: String
+	dpUrl: String
 	teacherIn: [Classroom!]
 	studentIn: [Classroom!]
 }

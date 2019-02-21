@@ -13,11 +13,16 @@ function students(parent, args, context) {
 }
 
 async function myclass(parent, args, context) {
-  const userId = getUserId(context)
-  if(await isAdmin(context))return true
+	const userId = getUserId(context)
+	if (
+		await context.prisma.$exists.user({
+			role: 'ADMIN',
+			id: getUserId(context)
+		})
+	)
+		return true
 	return await context.prisma.$exists.classroom({
-		AND:[{id: parent.id},
-		{teacher: { id: userId }}]
+		AND: [{ id: parent.id }, { teacher: { id: userId } }]
 	})
 }
 

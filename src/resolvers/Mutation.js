@@ -56,12 +56,7 @@ async function createClassroom(parent, args, context) {
 	await isTeacher(context, userId)
 	return context.prisma.createClassroom({
 		teacher: { connect: { id: userId } },
-		name: args.name,
-		description: args.description,
-		learning: args.learning,
-		language: args.language,
-		requirements: args.requirements,
-		objectives: args.objectives
+		...args
 	})
 }
 
