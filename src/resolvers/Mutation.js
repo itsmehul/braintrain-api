@@ -15,7 +15,7 @@ async function signup(parent, args, context, info) {
 	const user = await context.prisma.createUser({
 		...args,
 		fid,
-		role: 'TEACHER'
+		role: 'STUDENT'
 	})
 
 	// 3

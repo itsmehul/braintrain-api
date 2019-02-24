@@ -8,7 +8,7 @@ type Query {
 	lecture(id: ID!): Lecture
 }
 type Mutation {
-	signup(email: String!, fid: String!, name: String!): AuthPayload
+	signup(email: String!, fid: String!, name: String!,dpUrl: String): AuthPayload
 	login(email: String!, fid: String!): AuthPayload
   #STUDENT mutations
 	joinBatch(batchId: ID!, classroomId: ID!): Batch
