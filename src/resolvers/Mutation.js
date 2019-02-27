@@ -157,6 +157,7 @@ async function deleteClassroom(parent, args, context) {
 }
 
 async function updateUser(parent, args, context) {
+	console.log(args)
 	return context.prisma.updateUser({
 		data: {
 			...args
