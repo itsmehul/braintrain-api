@@ -78,9 +78,9 @@ async function isStudent(context, userId, batchId) {
 	return
 }
 
-async function isAvailable(context, userId, liveAt, endAt) {
+async function isAvailable(context, userId, liveAt, endAt, batchId) {
   if(new Date(liveAt)>new Date(endAt)) throw new Error(`Lecture cannot end before it starts!!`)
-
+  if(await context.prisma.$exists.batch({id: batchId,startsFrom_gt: liveAt})) throw new Error(`Lecture cannot start before the batch!`)
 	// if (false) {
 		const isNotAvailable = await context.prisma.$exists.lecture(
 			{

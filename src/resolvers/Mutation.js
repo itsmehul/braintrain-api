@@ -75,7 +75,7 @@ async function createBatch(parent, args, context) {
 async function createLecture(parent, args, context) {
 	const userId = getUserId(context)
 	await isTeacher(context, userId, args.classroomId)
-	await isAvailable(context, userId, args.liveAt, args.endAt)
+	await isAvailable(context, userId, args.liveAt, args.endAt, args.batchId)
 	return context.prisma.createLecture({
 		teacher: { connect: { id: userId } },
 		name: args.name,
@@ -215,8 +215,7 @@ async function joinBatch(parent, args, context) {
 
 async function joinLiveLecture(parent, args, context) {
 	const userId = getUserId(context)
-	await isStudent(context, userId, args.batchId)
-
+	if(!await isTeacher(context, userId, args.batchId)) await isStudent(context, userId, args.batchId)
 	return context.prisma.updateLecture({
 		data: {
 			students: { connect: { id: userId } }
