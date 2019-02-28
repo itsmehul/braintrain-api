@@ -106,7 +106,7 @@ async function deleteLecture(parent, args, context) {
 	const { lectureId } = args
 	await isTeacher(context, userId, null, null, lectureId)
 	return context.prisma.deleteLecture({
-			id: lectureId
+		id: lectureId
 	})
 }
 
@@ -129,7 +129,7 @@ async function deleteBatch(parent, args, context) {
 	const { batchId } = { ...args }
 	await isTeacher(context, userId, null, batchId)
 	return context.prisma.deleteBatch({
-			id: batchId
+		id: batchId
 	})
 }
 
@@ -152,7 +152,7 @@ async function deleteClassroom(parent, args, context) {
 	const { classroomId } = { ...args }
 	await isTeacher(context, userId, classroomId)
 	return context.prisma.deleteClassroom({
-			id: classroomId
+		id: classroomId
 	})
 }
 
@@ -170,7 +170,7 @@ async function updateUser(parent, args, context) {
 
 async function deleteUser(parent, args, context) {
 	return context.prisma.deleteUser({
-			id: getUserId(context)
+		id: getUserId(context)
 	})
 }
 
@@ -215,7 +215,21 @@ async function joinBatch(parent, args, context) {
 
 async function joinLiveLecture(parent, args, context) {
 	const userId = getUserId(context)
-	if(!await isTeacher(context, userId, args.batchId)) await isStudent(context, userId, args.batchId)
+	let canJoin = false
+	let error = null
+	try {
+		await isTeacher(context, userId, null, args.batchId)
+		canJoin=true
+	} catch (e) {
+		error=e
+	}
+	try {
+		await isStudent(context, userId, args.batchId)
+		canJoin=true
+	} catch (e) {
+		error=e
+	}
+	if(!canJoin)return error
 	return context.prisma.updateLecture({
 		data: {
 			students: { connect: { id: userId } }

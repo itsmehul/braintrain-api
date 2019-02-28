@@ -20,7 +20,7 @@ async function isAdmin(context) {
 	if (!isAdmin) {
 		throw new Error(`You are not an admin`)
 	}
-	return
+	return true
 }
 
 async function isTeacher(context, userId, classroomId, batchId, lectureId) {
@@ -48,7 +48,7 @@ async function isTeacher(context, userId, classroomId, batchId, lectureId) {
 			teacher: { id: userId }
 		})
 		if (!isTeachersBatch) {
-			throw new Error(`This is not your lecture`)
+			throw new Error(`This is not your batch`)
 		}
 	}
 	if (lectureId) {
@@ -60,7 +60,7 @@ async function isTeacher(context, userId, classroomId, batchId, lectureId) {
 			throw new Error(`This is not your lecture`)
 		}
 	}
-	return
+	return true
 }
 
 async function isStudent(context, userId, batchId) {

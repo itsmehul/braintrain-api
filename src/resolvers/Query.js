@@ -15,6 +15,22 @@ const { getUserId } = require('../utils')
   function classroom(parent, args, context, info) {
     return context.prisma.classroom({id:args.id})
   }
+  
+  function lecture(parent, args, context, info) {
+    return context.prisma.lecture({id:args.id})
+  }
+
+  function lectures(parent, args, context, info) {
+    return context.prisma.lectures()
+  }
+
+  function batch(parent, args, context, info) {
+    return context.prisma.batch({id:args.id})
+  }
+
+  function batches(parent, args, context, info) {
+    return context.prisma.batches()
+  }
 
   function myprofile(parent, args, context, info) {
 	const userId = getUserId(context) 
@@ -26,5 +42,9 @@ const { getUserId } = require('../utils')
     myprofile,
     users,
     user,
-    classroom
+    classroom,
+    lecture,
+    lectures,
+    batch,
+    batches
   }
