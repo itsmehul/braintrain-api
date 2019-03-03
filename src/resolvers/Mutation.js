@@ -90,6 +90,7 @@ async function createLecture(parent, args, context) {
 async function updateLecture(parent, args, context) {
 	const userId = getUserId(context)
 	const { lectureId, ...rest } = { ...args }
+	console.log(lectureId)
 	await isTeacher(context, userId, null, null, lectureId)
 	return context.prisma.updateLecture({
 		data: {
@@ -187,36 +188,37 @@ async function promoteUser(parent, args, context) {
 	})
 }
 
-async function joinBatch(parent, args, context) {
-	const userId = getUserId(context)
+// async function joinBatch(parent, args, context) {
+// 	const userId = getUserId(context)
 
-	const count = await context.prisma
-		.batch({ id: args.batchId })
-		.$fragment(`{ students{name}  }`)
-	if (count.students.length > 4) throw new Error('Batch is full')
-	await context.prisma.updateClassroom({
-		data: {
-			students: { connect: { id: userId } }
-		},
-		where: {
-			id: args.classroomId
-		}
-	})
+// 	const count = await context.prisma
+// 		.batch({ id: args.batchId })
+// 		.$fragment(`{ students{name}  }`)
+// 	if (count.students.length > 4) throw new Error('Batch is full')
+// 	await context.prisma.updateClassroom({
+// 		data: {
+// 			students: { connect: { id: userId } }
+// 		},
+// 		where: {
+// 			id: args.classroomId,
+// 		}
+// 	})
 
-	return context.prisma.updateBatch({
-		data: {
-			students: { connect: { id: userId } }
-		},
-		where: {
-			id: args.batchId
-		}
-	})
-}
+// 	return context.prisma.updateBatch({
+// 		data: {
+// 			students: { connect: { id: userId } }
+// 		},
+// 		where: {
+// 			id: args.batchId
+// 		}
+// 	})
+// }
 
 async function joinLiveLecture(parent, args, context) {
 	const userId = getUserId(context)
 	let canJoin = false
 	let error = null
+	
 	try {
 		await isTeacher(context, userId, null, args.batchId)
 		canJoin=true
@@ -251,7 +253,7 @@ module.exports = {
 	updateBatch,
 	updateClassroom,
 	updateLecture,
-	joinBatch,
+	// joinBatch,
 	joinLiveLecture,
 	deleteBatch,
 	deleteLecture,

@@ -13,7 +13,7 @@ type Mutation {
 	signup(email: String!, fid: String!, name: String!,dpUrl: String): AuthPayload
 	login(email: String!, fid: String!): AuthPayload
   #STUDENT mutations
-	joinBatch(batchId: ID!, classroomId: ID!): Batch
+	# joinBatch(batchId: ID!, classroomId: ID!): Batch
   joinLiveLecture(lectureId: ID!, batchId: ID!): Lecture
 
   # TEACHER mutations
